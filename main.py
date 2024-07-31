@@ -1,59 +1,62 @@
 import duckdb
 
 
-def get_revenue_per_month() -> duckdb.duckdb.DuckDBPyRelation:
+def main():
     with duckdb.connect() as conn:
-        return conn.sql(
+        conn.sql("CREATE TEMPORARY TABLE orders AS SELECT * FROM READ_CSV('orders.csv')")
+
+        # revenue per month
+        data = conn.sql(
             """
             SELECT
                 MONTH(order_date) as month,
                 ROUND(SUM(product_price), 2) as revenue
             FROM
-                READ_CSV('orders.csv')
+                orders
             GROUP BY
                 MONTH(order_date)
             ORDER BY
                 month
             """
         )
+        print(data)
 
-def get_revenue_per_product() -> duckdb.duckdb.DuckDBPyRelation:
-    with duckdb.connect() as conn:
-        return conn.sql(
+        # revenue per product
+        data = conn.sql(
             """
             SELECT
                 product_id,
                 ROUND(SUM(product_price), 2) as revenue
             FROM
-                READ_CSV('orders.csv')
+                orders
             GROUP BY
                 product_id
             """
         )
+        print(data)
 
-def get_revenue_per_customer() -> duckdb.duckdb.DuckDBPyRelation:
-    with duckdb.connect() as conn:
-        return conn.sql(
+        # revenue per customer
+        data = conn.sql(
             """
             SELECT
                 customer_id,
                 ROUND(SUM(product_price), 2) as revenue
             FROM
-                READ_CSV('orders.csv')
+                orders
             GROUP BY
                 customer_id
             """
         )
+        print(data)
 
-def get_top_10_customers() -> duckdb.duckdb.DuckDBPyRelation:
-    with duckdb.connect() as conn:
-        return conn.sql(
+        # top 10 customers
+        data = conn.sql(
             """
             SELECT
                 customer_id,
                 ROUND(SUM(product_price), 2) as revenue
             FROM
-                READ_CSV('orders.csv')
+                orders
             GROUP BY
                 customer_id
             ORDER BY
@@ -62,12 +65,7 @@ def get_top_10_customers() -> duckdb.duckdb.DuckDBPyRelation:
                 10
             """
         )
-
-def main():
-    print(get_revenue_per_month())
-    # print(get_revenue_per_customer())
-    # print(get_revenue_per_product)
-    # print(get_top_10_customers())
+        print(data)
 
 if __name__ == '__main__':
     main()
