@@ -5,8 +5,7 @@ def main():
     with duckdb.connect() as conn:
         conn.sql("CREATE TEMPORARY TABLE orders AS SELECT * FROM READ_CSV('orders.csv')")
 
-        # revenue per month
-        data = conn.sql(
+        revenue_per_month =  conn.sql(
             """
             SELECT
                 MONTH(order_date) as month,
@@ -19,10 +18,9 @@ def main():
                 month
             """
         )
-        print(data)
+        print(revenue_per_month)
 
-        # revenue per product
-        data = conn.sql(
+        revenue_per_product = conn.sql(
             """
             SELECT
                 product_id,
@@ -33,10 +31,9 @@ def main():
                 product_id
             """
         )
-        print(data)
+        print(revenue_per_product)
 
-        # revenue per customer
-        data = conn.sql(
+        revenue_per_customer = conn.sql(
             """
             SELECT
                 customer_id,
@@ -47,10 +44,9 @@ def main():
                 customer_id
             """
         )
-        print(data)
+        print(revenue_per_customer)
 
-        # top 10 customers
-        data = conn.sql(
+        top_10_customers = conn.sql(
             """
             SELECT
                 customer_id,
@@ -65,7 +61,7 @@ def main():
                 10
             """
         )
-        print(data)
+        print(top_10_customers)
 
 if __name__ == '__main__':
     main()
